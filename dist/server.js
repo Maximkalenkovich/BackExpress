@@ -11,7 +11,7 @@ app.get('/courses', (req, res) => {
         { id: 1, name: 'serverExpress', version: '1.0.0' },
         { id: 2, name: 'serverExpress', version: '1.0.0' },
         { id: 3, name: 'serverExpress', version: '1.0.0' },
-        { id: 4, name: 'serverExpress', version: '1.0.0' }
+        { id: 4, name: 'serverExpress', version: '1.0.0' },
     ]);
 });
 app.get('/courses/:id', (req, res) => {
@@ -19,10 +19,10 @@ app.get('/courses/:id', (req, res) => {
         { id: 1, name: 'serverExpress', version: '1.0.0' },
         { id: 2, name: 'serverExpress', version: '1.0.0' },
         { id: 3, name: 'serverExpress', version: '1.0.0' },
-        { id: 4, name: 'serverExpress', version: '1.0.0' }
-    ].find(i => i.id === parseInt(req.params.id));
+        { id: 4, name: 'serverExpress', version: '1.0.0' },
+    ].find((i) => i.id === parseInt(req.params.id));
     if (!foundCourses) {
-        res.status(404).json({ message: 'Course not found' });
+        res.status(402).json({ message: 'Course not found' });
         return;
     }
     res.json(foundCourses);
