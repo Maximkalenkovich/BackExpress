@@ -66,6 +66,19 @@ app.delete('/books/:id', (req, res) => {
 
   res.sendStatus(204);
 });
+
+app.put('/books/:id', (req, res) => {
+  const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
+
+  if (!foundBooks) {
+    res.sendStatus(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  foundBooks.name = req.body.name;
+
+  res.json(foundBooks);
+});
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
