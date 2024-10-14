@@ -31,22 +31,31 @@ app.get('/books', (req, res) => {
     }
     res.json(foundBooks);
 });
-app.get('/courses/:id', (req, res) => {
-    const foundCourses = db.books.find((i) => i.id === parseInt(req.params.id));
-    if (!foundCourses) {
+app.get('/books/:id', (req, res) => {
+    const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
+    if (!foundBooks) {
         res.sendStatus(404).json({ message: 'Course not found' });
         return;
     }
-    res.json(foundCourses);
+    res.json(foundBooks);
 });
 app.post('/books', (req, res) => {
-    const newBook = { id: db.books.length + 1, name: req.body.name, version: req.body.version || '1.0.0' };
-    db.books.push(newBook);
-    res.json(newBook);
-    if (newBook.name === '') {
+    if (!req.body.name) {
         res.sendStatus(404).json({ message: 'Course not found' });
         return;
     }
+    const newBook = { id: db.books.length + 1, name: req.body.name, version: req.body.version || '1.0.0' };
+    db.books.push(newBook);
+    res.status(200).json(newBook);
+});
+app.delete('/books/:id', (req, res) => {
+    const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
+    if (!foundBooks) {
+        res.sendStatus(404).json({ message: 'Course not found' });
+        return;
+    }
+    db.books = db.books.filter((i) => i.id !== +req.params.id);
+    res.sendStatus(204);
 });
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
