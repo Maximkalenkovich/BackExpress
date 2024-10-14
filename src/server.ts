@@ -4,28 +4,39 @@ const app = express();
 const port = 3001;
 
 const db = {
-  courses: [
-    { id: 1, name: 'serverExpress', version: '1.0.0' },
-    { id: 2, name: 'serverExpress', version: '1.0.0' },
-    { id: 3, name: 'serverExpress', version: '1.0.0' },
-    { id: 4, name: 'serverExpress', version: '1.0.0' },
+  books: [
+    { id: 1, name: 'child', version: '1.0.0' },
+    { id: 2, name: 'non-child', version: '1.0.0' },
+    { id: 3, name: 'parent', version: '1.0.0' },
+    { id: 4, name: 'parent and child', version: '1.0.0' },
+    { id: 5, name: 'new book', version: '1.0.0' },
   ],
 };
+
+const jsonMiddleware = express.json();
+app.use(jsonMiddleware);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/courses', (req, res) => {
-  if (!db.courses) {
+
+app.get('/books', (req, res) => {
+  let foundBooks = db.books;
+
+  if (req.query.name) {
+    foundBooks = foundBooks.filter((b) => b.name.indexOf(req.query.name as string) > -1);
+  }
+
+  if (!db.books) {
     res.sendStatus(404).json({ message: 'Course not found' });
     return;
   }
-  res.json(db.courses);
+  res.json(foundBooks);
 });
 
 app.get('/courses/:id', (req, res) => {
-  const foundCourses = db.courses.find((i) => i.id === parseInt(req.params.id));
+  const foundCourses = db.books.find((i) => i.id === parseInt(req.params.id));
 
   if (!foundCourses) {
     res.sendStatus(404).json({ message: 'Course not found' });
@@ -34,6 +45,17 @@ app.get('/courses/:id', (req, res) => {
 
   res.json(foundCourses);
 });
+
+app.post('/books', (req, res) => {
+    const newBook = { id: db.books.length + 1, name: req.body.name, version: req.body.version || '1.0.0' };
+    db.books.push(newBook);
+    res.json(newBook);
+    if (newBook.name === '') {
+      res.sendStatus(404).json({ message: 'Course not found' });
+      return;
+    }
+  },
+);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
