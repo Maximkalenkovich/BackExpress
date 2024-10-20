@@ -17,4 +17,22 @@ describe('Books API', () => {
       .get('/books/789678678')
       .expect(404);
   });
+
+  it('POST /books', async () => {
+    await request(app)
+      .post('/books')
+      .send({ name: 'test book', version: '1.0.0' })
+      .expect(200, { id: 6, name: 'test book', version: '1.0.0' });
+  });
+  it('DELETE /books/:id', async () => {
+    await request(app)
+      .delete('/books/2')
+      .expect(204);
+  });
+  it ('PUT /books/:id', async () => {
+    await request(app)
+      .put('/books/2')
+      .send({ name: 'test book', version: '1.0.0' })
+      .expect(200, { id: 2, name: 'test book', version: '1.0.0' });
+  })
 });
