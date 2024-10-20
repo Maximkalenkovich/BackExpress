@@ -11,10 +11,10 @@ describe('Books API', () => {
         { id: 4, name: 'parent and child', version: '1.0.0' },
         { id: 5, name: 'new book', version: '1.0.0' }]);
   });
-});
-describe("Books API", () => {
 
-  it("GET /books", async () => {
-expect(1).toBe(1)
-  })
-})
+  it('404 not found', async () => {
+    await request(app)
+      .get('/books/789678678')
+      .expect(404);
+  });
+});
