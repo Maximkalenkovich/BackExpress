@@ -12,9 +12,3 @@ describe('Books API', () => {
         { id: 5, name: 'new book', version: '1.0.0' }]);
   });
 });
-describe("Books API", () => {
-
-  it("GET /books", async () => {
-expect(1).toBe(1)
-  })
-})
