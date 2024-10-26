@@ -1,9 +1,15 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 export const app = express();
 const port = 3001;
 
-const db = {
+type CourseType = {
+  id: number;
+  name: string;
+  version: string;
+};
+
+const db: { books: CourseType[] } = {
   books: [
     { id: 1, name: 'child', version: '1.0.0' },
     { id: 2, name: 'non-child', version: '1.0.0' },
@@ -19,8 +25,8 @@ app.use(jsonMiddleware);
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-app.get('/books', (req, res) => {
-  let foundBooks = db.books;
+app.get('/books', (req: Request<{}, {}, {}, { name?: string }>, res: Response<CourseType[] | { message: string }>) => {
+  let foundBooks: CourseType[] = db.books;
 
   if (req.query.name) {
     foundBooks = foundBooks.filter((b) => b.name.indexOf(req.query.name as string) > -1);
@@ -32,7 +38,7 @@ app.get('/books', (req, res) => {
   }
   res.json(foundBooks);
 });
-app.get('/books/:id', (req, res) => {
+app.get('/books/:id', (req: Request<{ id: string }>, res: Response<CourseType | { message: string }>) => {
   const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
 
   if (!foundBooks) {
@@ -42,7 +48,7 @@ app.get('/books/:id', (req, res) => {
 
   res.json(foundBooks);
 });
-app.post('/books', (req, res) => {
+app.post('/books', (req: Request<{}, {}, CourseType>, res: Response<CourseType | { message: string }>) => {
     if (!req.body.name) {
       res.sendStatus(404).json({ message: 'Course not found' });
       return;
@@ -53,7 +59,7 @@ app.post('/books', (req, res) => {
     res.status(200).json(newBook);
   },
 );
-app.delete('/books/:id', (req, res) => {
+app.delete('/books/:id', (req: Request<{ id: string }>, res) => {
 
   const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
 
@@ -67,7 +73,7 @@ app.delete('/books/:id', (req, res) => {
   res.sendStatus(204);
 });
 
-app.put('/books/:id', (req, res) => {
+app.put('/books/:id', (req: Request<{ id: string }, {}, { name: string }>, res) => {
   const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
 
   if (!foundBooks) {
@@ -79,6 +85,6 @@ app.put('/books/:id', (req, res) => {
 
   res.json(foundBooks);
 });
-app.listen(port, ()    => {
+app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
