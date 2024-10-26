@@ -1,4 +1,5 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
+import { RequestWithQuery, RequestWithParams, RequestWithBody, RequestWithParamsAndBody } from './types/types';
 
 export const app = express();
 const port = 3001;
@@ -25,7 +26,7 @@ app.use(jsonMiddleware);
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-app.get('/books', (req: Request<{}, {}, {}, { name?: string }>, res: Response<CourseType[] | { message: string }>) => {
+app.get('/books', (req: RequestWithQuery<{ name?: string }>, res: Response<CourseType[] | { message: string }>) => {
   let foundBooks: CourseType[] = db.books;
 
   if (req.query.name) {
@@ -38,7 +39,7 @@ app.get('/books', (req: Request<{}, {}, {}, { name?: string }>, res: Response<Co
   }
   res.json(foundBooks);
 });
-app.get('/books/:id', (req: Request<{ id: string }>, res: Response<CourseType | { message: string }>) => {
+app.get('/books/:id', (req: RequestWithParams<{ id: string }>, res: Response<CourseType | { message: string }>) => {
   const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
 
   if (!foundBooks) {
@@ -48,7 +49,7 @@ app.get('/books/:id', (req: Request<{ id: string }>, res: Response<CourseType | 
 
   res.json(foundBooks);
 });
-app.post('/books', (req: Request<{}, {}, CourseType>, res: Response<CourseType | { message: string }>) => {
+app.post('/books', (req: RequestWithBody<CourseType>, res: Response<CourseType | { message: string }>) => {
     if (!req.body.name) {
       res.sendStatus(404).json({ message: 'Course not found' });
       return;
@@ -59,7 +60,7 @@ app.post('/books', (req: Request<{}, {}, CourseType>, res: Response<CourseType |
     res.status(200).json(newBook);
   },
 );
-app.delete('/books/:id', (req: Request<{ id: string }>, res) => {
+app.delete('/books/:id', (req: RequestWithParams<{ id: string }>, res) => {
 
   const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
 
@@ -73,7 +74,7 @@ app.delete('/books/:id', (req: Request<{ id: string }>, res) => {
   res.sendStatus(204);
 });
 
-app.put('/books/:id', (req: Request<{ id: string }, {}, { name: string }>, res) => {
+app.put('/books/:id', (req: RequestWithParamsAndBody<{ id: string }, { name: string }>, res) => {
   const foundBooks = db.books.find((i) => i.id === parseInt(req.params.id));
 
   if (!foundBooks) {
